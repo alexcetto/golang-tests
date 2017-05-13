@@ -20,6 +20,3 @@ func main() {
 func clientHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(w, "Working", r.URL.Path[1:])
 }
-
-func waitForMessages(data string) {
-}

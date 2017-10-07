@@ -1,20 +1,21 @@
 package db
 
 import (
-	"../types"
 	"database/sql"
+	"github.com/alexcetto/golang-tests/types"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"time"
+	"fmt"
 )
 
 var err error
 var database *sql.DB
 
 func init() {
-	defer database.Close()
-	database, err = sql.Open("sqlite3", "./identifier.sqlite")
-	if err == nil {
+	database, err = sql.Open("sqlite3", "/Users/alexandrecetto/go/src/github.com/alexcetto/golang-tests/schema.db")
+	if err != nil {
+		log.Println("We are here now")
 		log.Println(err)
 	}
 }
@@ -46,4 +47,23 @@ func GetTasks() types.Context {
 	}
 	context = types.Context{Tasks: tasks}
 	return context
+}
+
+func Addtask(title, content string) error {
+	query := "INSERT INTO task(title, content, created_date, last_modified_at) values(?,?, datetime(), datetime())"
+		restoreSQL, err := database.Prepare(query)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		tx, err := database.Begin()
+		_, err = tx.Stmt(restoreSQL).Exec(title, content)
+		if err != nil {
+			fmt.Println(err)
+			tx.Rollback()
+		} else {
+			log.Print("Insert Successful")
+			tx.Commit()
+		}
+		return err
 }

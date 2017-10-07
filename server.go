@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./views"
+	"github.com/alexcetto/golang-tests/views"
 	"log"
 	"net/http"
 )

@@ -1,8 +1,9 @@
 package views
 
 import (
-	"../db"
+	"github.com/alexcetto/golang-tests/db"
 	"net/http"
+	"log"
 )
 
 // Route /
@@ -106,13 +107,13 @@ func UpdateTaskFunc(w http.ResponseWriter, r *http.Request) {
 
 // Route /add/
 func AddTaskFunc(w http.ResponseWriter, r *http.Request) {
-	var message string
-	if r.Method == "GET" {
-		message = "Add task GET"
-	} else {
-		message = "Add task POST"
+	title := "Random title"
+	content := "Random content"
+	truth := db.Addtask(title, content)
+	if truth != nil {
+		log.Fatal("Error adding task")
 	}
-	w.Write([]byte(message))
+	w.Write([]byte("Added task"))
 }
 
 // Route /restore/

@@ -6,11 +6,10 @@ import (
 	"net/http"
 )
 
-// Specific SQL driver loaded anonymously
-
-var err error
-
 func main() {
+
+	views.PopulateTemplates()
+
 	http.HandleFunc("/complete/", views.CompleteTaskFunc)
 	http.HandleFunc("/delete/", views.DeleteTaskFunc)
 	http.HandleFunc("/deleted/", views.ShowTrashTaskFunc)

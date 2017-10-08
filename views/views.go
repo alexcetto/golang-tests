@@ -4,15 +4,30 @@ import (
 	"github.com/alexcetto/golang-tests/db"
 	"net/http"
 	"log"
+	"time"
+	"html/template"
 )
+
+var message string
+var homeTemplate *template.Template
+var templates *template.Template
 
 // Route /
 func ShowAllTasksFunc(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		context := db.GetTasks()
-		w.Write([]byte(context.Tasks[0].Title))
+		context := db.GetTasks("PENDING")
+		if message != "" {
+			context.Message = message
+		}
+		context.CSRFToken = "abcd"
+		message = ""
+		expiration := time.Now().Add(365 * 24 * time.Hour)
+		cookie := http.Cookie{Name: "csrftoken", Value: "abcd", Expires:expiration}
+		http.SetCookie(w, &cookie)
+		homeTemplate.Execute(w, context)
 	} else {
-		w.Write([]byte("All pending tasks POST"))
+		w.Write([]byte("Method not allowed"))
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
 }
